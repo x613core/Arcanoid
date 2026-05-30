@@ -30,7 +30,7 @@ sf::Vector2f Border::ballCollisionCoverDepth(sf::Vector2f position, int radius)
     if (position.y <= thisPosition.y + BORDER_THICKNESS)
         result.y = thisPosition.y + BORDER_THICKNESS - position.y;
     else if (position.y + 2 * radius >= thisPosition.y + size.y - BORDER_THICKNESS)
-        result.y = position.y + 2 * radius - thisPosition.y - size.y + BORDER_THICKNESS;
+        result.y = -1; // position.y + 2 * radius - thisPosition.y - size.y + BORDER_THICKNESS;
     else
         result.y = 0;
 

@@ -22,11 +22,12 @@ void Ball::setAngle(double angle)
     horisontalAngle = angle;
 }
 
-Ball::Ball(int radius, int speed, double angleInRadians, Border *border)
+Ball::Ball(int radius, int speed, double angleInRadians, ICollider *collider)
 {
+    _isDeleted = 0;
     this->radius = radius;
     this->speed = speed;
-    this->border = border;
+    this->collider = collider;
     setAngle(angleInRadians);
 }
 
@@ -38,19 +39,27 @@ void Ball::draw(sf::RenderTarget &target, sf::RenderStates states) const
     target.draw(ball, states);
 }
 
+bool Ball::isDeleted()
+{
+    return _isDeleted;
+}
+
 void Ball::update()
 {
     this->move(sf::Vector2f(speed * cos(horisontalAngle), -speed * sin(horisontalAngle)));
     double startSpeed = speed;
 
-    sf::Vector2f collisionEnter = (*border).ballCollisionCoverDepth(getPosition(), radius);
+    sf::Vector2f collisionEnter = (*collider).ballCollisionCoverDepth(getPosition(), radius);
+    if (collisionEnter.y == -1)
+    {
+        _isDeleted = 1;
+        return;
+    }
     if (collisionEnter != sf::Vector2f(0, 0))
     {
         double speedX = collisionEnter.x / std::abs(cos(horisontalAngle));
         double speedY = collisionEnter.y / std::abs(sin(horisontalAngle));
         speed = std::max(speedX, speedY);
-        this->move(sf::Vector2f(-speed * cos(horisontalAngle),
-                                speed * sin(horisontalAngle)));
 
         if (speedX > speedY)
             setAngle(newAngleVerticalHit());
