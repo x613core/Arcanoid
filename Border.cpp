@@ -4,6 +4,12 @@ Border::Border(sf::Vector2u size)
 {
     this->size = size;
     tag = BORDER_TAG;
+    _redZoneToched = 0;
+}
+
+bool Border::redZoneToched()
+{
+    return _redZoneToched;
 }
 
 bool Border::ballEnteredCollision(sf::Vector2f position, int radius)
@@ -17,6 +23,7 @@ bool Border::ballEnteredCollision(sf::Vector2f position, int radius)
 
 sf::Vector2f Border::ballCollisionCoverDepth(sf::Vector2f position, int radius)
 {
+    _redZoneToched = 0;
     sf::Vector2f result;
     sf::Vector2f thisPosition = getPosition();
 
@@ -30,7 +37,10 @@ sf::Vector2f Border::ballCollisionCoverDepth(sf::Vector2f position, int radius)
     if (position.y <= thisPosition.y + BORDER_THICKNESS)
         result.y = thisPosition.y + BORDER_THICKNESS - position.y;
     else if (position.y + 2 * radius >= thisPosition.y + size.y - BORDER_THICKNESS)
-        result.y = -1; // position.y + 2 * radius - thisPosition.y - size.y + BORDER_THICKNESS;
+    {
+        result.y = position.y + 2 * radius - thisPosition.y - size.y + BORDER_THICKNESS;
+        _redZoneToched = 1;
+    }
     else
         result.y = 0;
 

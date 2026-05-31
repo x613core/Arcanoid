@@ -22,6 +22,16 @@ void Ball::setAngle(double angle)
     horisontalAngle = angle;
 }
 
+double Ball::getSpeed()
+{
+    return speed;
+}
+
+void Ball::setSpeed(double speed)
+{
+    this->speed = (speed > 0) ? speed : 0;
+}
+
 Ball::Ball(int radius, int speed, double angleInRadians, ICollider *collider)
 {
     _isDeleted = 0;
@@ -44,17 +54,25 @@ bool Ball::isDeleted()
     return _isDeleted;
 }
 
+int Ball::getRadius()
+{
+    return radius;
+}
+
+void Ball::resetYPosition()
+{
+    sf::Vector2f newPos = getPosition();
+    newPos.y = BALL_START_POSITION.y;
+    setPosition(newPos);
+}
+
 void Ball::update()
 {
     this->move(sf::Vector2f(speed * cos(horisontalAngle), -speed * sin(horisontalAngle)));
     double startSpeed = speed;
 
     sf::Vector2f collisionEnter = (*collider).ballCollisionCoverDepth(getPosition(), radius);
-    if (collisionEnter.y == -1)
-    {
-        _isDeleted = 1;
-        return;
-    }
+
     if (collisionEnter != sf::Vector2f(0, 0))
     {
         double speedX = collisionEnter.x / std::abs(cos(horisontalAngle));

@@ -5,6 +5,17 @@ Platform::Platform(sf::Vector2u size, sf::Vector2i xPositionLimit)
     this->size = size;
     this->xPositionLimit = xPositionLimit;
     this->currentPosition = getPosition();
+    _platformInBall = 0;
+}
+
+void Platform::setBall(Ball *ball)
+{
+    this->ball = ball;
+}
+
+bool Platform::platformInBall()
+{
+    return _platformInBall;
 }
 
 void Platform::setNewPosition(sf::Vector2i newPosition)
@@ -20,8 +31,12 @@ void Platform::setNewPosition(sf::Vector2i newPosition)
 
 void Platform::update()
 {
+    _platformInBall = 0;
     setPosition(sf::Vector2f(newPosition.x, newPosition.y));
     this->currentPosition = getPosition();
+
+    if (ballCollisionCoverDepth(ball->getPosition(), ball->getRadius()) != sf::Vector2f(0, 0))
+        _platformInBall = 1;
 }
 
 void Platform::draw(sf::RenderTarget &target, sf::RenderStates states) const
